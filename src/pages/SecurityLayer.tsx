@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/enhanced-button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAuth } from '@/contexts/AuthContext';
 
 const securityFeatures = [
   {
@@ -131,6 +132,7 @@ const recentSecurityEvents = [
 ];
 
 export const SecurityLayer = () => {
+  const { user } = useAuth();
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'bg-success/10 text-success border-success/20';
@@ -169,18 +171,23 @@ export const SecurityLayer = () => {
         </p>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Security Overview</TabsTrigger>
-          <TabsTrigger value="access">Access Control</TabsTrigger>
+      <Tabs defaultValue={user?.role === 'executive' ? 'overview' : 'monitoring'} className="space-y-6">
+        <TabsList className={`grid w-full ${user?.role === 'executive' ? 'grid-cols-4' : 'grid-cols-2'}`}>
+          {user?.role === 'executive' && (
+            <>
+              <TabsTrigger value="overview">Security Overview</TabsTrigger>
+              <TabsTrigger value="access">Access Control</TabsTrigger>
+            </>
+          )}
           <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
           <TabsTrigger value="compliance">Compliance</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
-          {/* Security Features */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {securityFeatures.map((feature) => (
+        {user?.role === 'executive' && (
+          <TabsContent value="overview" className="space-y-6">
+            {/* Security Features */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {securityFeatures.map((feature) => (
               <Card key={feature.id} className="metro-card">
                 <CardHeader className="flex flex-row items-center space-y-0 pb-4">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mr-4">
@@ -219,11 +226,13 @@ export const SecurityLayer = () => {
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
 
-        <TabsContent value="access" className="space-y-6">
+        {user?.role === 'executive' && (
+          <TabsContent value="access" className="space-y-6">
           {/* Role-Based Access Control */}
           <Card className="metro-card">
             <CardHeader>
@@ -251,9 +260,10 @@ export const SecurityLayer = () => {
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
 
         <TabsContent value="monitoring" className="space-y-6">
           {/* Security Events */}

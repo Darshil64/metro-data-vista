@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/enhanced-button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
+import { useAuth } from '@/contexts/AuthContext';
 
 const deadlines = [
   {
@@ -142,6 +143,7 @@ const trendData = [
 ];
 
 export const Outputs = () => {
+  const { user } = useAuth();
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high': return 'bg-destructive/10 text-destructive border-destructive/20';
@@ -186,11 +188,15 @@ export const Outputs = () => {
       </div>
 
       <Tabs defaultValue="deadlines" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className={`grid w-full ${user?.role === 'vendor' ? 'grid-cols-3' : 'grid-cols-5'}`}>
           <TabsTrigger value="deadlines">Deadlines</TabsTrigger>
-          <TabsTrigger value="kpis">KPIs</TabsTrigger>
+          {user?.role !== 'vendor' && (
+            <>
+              <TabsTrigger value="kpis">KPIs</TabsTrigger>
+              <TabsTrigger value="insights">Insights</TabsTrigger>
+            </>
+          )}
           <TabsTrigger value="payments">Payments</TabsTrigger>
-          <TabsTrigger value="insights">Insights</TabsTrigger>
           <TabsTrigger value="trends">Trends</TabsTrigger>
         </TabsList>
 
@@ -277,10 +283,11 @@ export const Outputs = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="kpis" className="space-y-6">
-          {/* KPI Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {kpiData.map((kpi, index) => (
+        {user?.role !== 'vendor' && (
+          <TabsContent value="kpis" className="space-y-6">
+            {/* KPI Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {kpiData.map((kpi, index) => (
               <Card key={index} className="metro-card">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">{kpi.name}</CardTitle>
@@ -317,9 +324,10 @@ export const Outputs = () => {
                 <p className="text-muted-foreground">Chart visualization would be here</p>
                 <p className="text-xs text-muted-foreground">Using Recharts or Chart.js</p>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
 
         <TabsContent value="payments" className="space-y-6">
           {/* Payment Summary */}
@@ -388,10 +396,11 @@ export const Outputs = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="insights" className="space-y-6">
-          {/* AI Insights */}
-          <div className="space-y-4">
-            {insights.map((insight) => (
+        {user?.role !== 'vendor' && (
+          <TabsContent value="insights" className="space-y-6">
+            {/* AI Insights */}
+            <div className="space-y-4">
+              {insights.map((insight) => (
               <Card key={insight.id} className="metro-card">
                 <CardHeader className="flex flex-row items-center space-y-0 pb-4">
                   <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mr-4">
@@ -419,9 +428,10 @@ export const Outputs = () => {
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        </TabsContent>
+              ))}
+            </div>
+          </TabsContent>
+        )}
 
         <TabsContent value="trends" className="space-y-6">
           {/* Trend Analysis */}

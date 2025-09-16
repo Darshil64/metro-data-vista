@@ -36,6 +36,15 @@ export const Sidebar = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
+  // Filter navigation items based on user role
+  const getFilteredNavigationItems = () => {
+    if (user?.role === 'vendor') {
+      // Remove multi-source ingestion for vendors
+      return navigationItems.filter(item => item.href !== '/ingestion');
+    }
+    return navigationItems;
+  };
+
   return (
     <div className={cn(
       "h-full bg-sidebar border-r border-sidebar-border transition-all duration-300 flex flex-col",
@@ -70,7 +79,7 @@ export const Sidebar = () => {
 
       {/* Navigation */}
       <nav className="flex-1 p-2 space-y-1">
-        {navigationItems.map((item) => (
+        {getFilteredNavigationItems().map((item) => (
           <NavLink
             key={item.name}
             to={item.href}

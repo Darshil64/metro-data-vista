@@ -137,7 +137,7 @@ export const MultiSourceIngestion = () => {
             </CardHeader>
             <CardContent>
               <div
-                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                className={`border-2 border-dashed rounded-lg p-16 text-center transition-colors cursor-pointer ${
                   dragActive 
                     ? 'border-primary bg-primary/5' 
                     : 'border-border hover:border-primary/50'
@@ -147,9 +147,9 @@ export const MultiSourceIngestion = () => {
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
               >
-                <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">Drop your files here</h3>
-                <p className="text-muted-foreground mb-4">
+                <Upload className="w-20 h-20 text-muted-foreground mx-auto mb-6" />
+                <h3 className="text-2xl font-medium mb-4">Drop your files here</h3>
+                <p className="text-muted-foreground mb-6 text-lg">
                   Support for PDF, DOC, DOCX, XLS, XLSX files up to 10MB
                 </p>
                 <input
@@ -161,8 +161,8 @@ export const MultiSourceIngestion = () => {
                   id="file-upload"
                 />
                 <label htmlFor="file-upload">
-                  <Button variant="metro-outline" className="cursor-pointer">
-                    <Plus className="w-4 h-4 mr-2" />
+                  <Button variant="metro-outline" size="lg" className="cursor-pointer">
+                    <Plus className="w-5 h-5 mr-2" />
                     Choose Files
                   </Button>
                 </label>

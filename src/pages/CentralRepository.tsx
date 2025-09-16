@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Table,
   TableBody,
@@ -135,6 +136,7 @@ const auditTrail = [
 ];
 
 export const CentralRepository = () => {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
@@ -176,10 +178,14 @@ export const CentralRepository = () => {
       </div>
 
       <Tabs defaultValue="documents" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className={`grid w-full ${user?.role === 'vendor' ? 'grid-cols-1' : 'grid-cols-3'}`}>
           <TabsTrigger value="documents">Document Library</TabsTrigger>
-          <TabsTrigger value="audit">Audit Trail</TabsTrigger>
-          <TabsTrigger value="stats">Repository Stats</TabsTrigger>
+          {user?.role !== 'vendor' && (
+            <>
+              <TabsTrigger value="audit">Audit Trail</TabsTrigger>
+              <TabsTrigger value="stats">Repository Stats</TabsTrigger>
+            </>
+          )}
         </TabsList>
 
         <TabsContent value="documents" className="space-y-6">
@@ -193,7 +199,7 @@ export const CentralRepository = () => {
                 <div className="md:col-span-2 relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search documents, tags, or content..."
+                    placeholder="Search documents or data..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -313,16 +319,17 @@ export const CentralRepository = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="audit" className="space-y-6">
-          {/* Audit Trail */}
-          <Card className="metro-card">
-            <CardHeader>
-              <CardTitle>Audit Trail</CardTitle>
-              <CardDescription>Track all document activities and changes</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {auditTrail.map((entry) => (
+        {user?.role !== 'vendor' && (
+          <TabsContent value="audit" className="space-y-6">
+            {/* Audit Trail */}
+            <Card className="metro-card">
+              <CardHeader>
+                <CardTitle>Audit Trail</CardTitle>
+                <CardDescription>Track all document activities and changes</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {auditTrail.map((entry) => (
                   <div key={entry.id} className="flex items-start space-x-4 p-4 rounded-lg bg-muted/30">
                     <div className="w-2 h-2 bg-primary rounded-full mt-2" />
                     <div className="flex-1 space-y-1">
@@ -340,12 +347,14 @@ export const CentralRepository = () => {
                     </div>
                   </div>
                 ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
 
-        <TabsContent value="stats" className="space-y-6">
+        {user?.role !== 'vendor' && (
+          <TabsContent value="stats" className="space-y-6">
           {/* Repository Statistics */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="metro-card">
@@ -430,9 +439,10 @@ export const CentralRepository = () => {
                   <div className="text-sm font-medium">5,107 (11.3%)</div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );
